@@ -10,7 +10,7 @@
         Publisher="CN=Hugo"
         Version="1.5.2.0"
         ProcessorArchitecture="x64"
-        Uri="https://your-username.github.io/calculator-web/Calculator_1.5.2.0_x64.msix" />
+        Uri="https://wen-ar.github.io/calculator-web/Calculator_1.5.2.0_x64.msix" />
 
     <UpdateSettings>
         <OnLaunch HoursBetweenUpdateChecks="0" />
