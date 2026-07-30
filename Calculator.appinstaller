@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppInstaller
+    Uri="https://wen-ar.github.io/calculator-web/Calculator.appinstaller"
+    Version="1.5.2.0"
+    Publisher="CN=Hugo"
+    xmlns="http://schemas.microsoft.com/appx/appinstaller/2017/2">
+
+    <MainPackage
+        Name="Calculator"
+        Publisher="CN=Hugo"
+        Version="1.5.2.0"
+        ProcessorArchitecture="x64"
+        Uri="https://your-username.github.io/calculator-web/Calculator_1.5.2.0_x64.msix" />
+
+    <UpdateSettings>
+        <OnLaunch HoursBetweenUpdateChecks="0" />
+    </UpdateSettings>
+</AppInstaller>
