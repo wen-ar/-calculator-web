@@ -2,12 +2,12 @@
 <AppInstaller
     Uri="https://wen-ar.github.io/calculator-web/Calculator.appinstaller"
     Version="1.5.2.0"
-    Publisher="CN=Hugo"
-    xmlns="http://schemas.microsoft.com/appx/appinstaller/2017/2">
+    Publisher="CN=Wen-ar"
+    xmlns="http://schemas.microsoft.com/appx/appinstaller/2018">
 
     <MainPackage
         Name="Calculator"
-        Publisher="CN=Hugo"
+        Publisher="CN=Wen-ar"
         Version="1.5.2.0"
         ProcessorArchitecture="x64"
         Uri="https://wen-ar.github.io/calculator-web/Calculator_1.5.2.0_x64.msix" />
