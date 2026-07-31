@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AppInstaller
-    Uri="https://wen-ar.github.io/calculator-web/Calculator.appinstaller"
+    Uri="https://wen-ar.github.io/calculator-web/install.appinstaller"
     Version="1.5.2.0"
     Publisher="CN=Wen-ar"
     xmlns="http://schemas.microsoft.com/appx/appinstaller/2018">
 
     <MainPackage
-        Name="Calculator"
+        Name="134d1b0d-4d6a-467b-b6a4-d90583e57d75"
         Publisher="CN=Wen-ar"
         Version="1.5.2.0"
         ProcessorArchitecture="x64"
