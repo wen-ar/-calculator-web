@@ -2,7 +2,6 @@
 <AppInstaller
     Uri="https://wen-ar.github.io/calculator-web/install.appinstaller"
     Version="1.5.2.0"
-    Publisher="CN=Wen-ar"
     xmlns="http://schemas.microsoft.com/appx/appinstaller/2018">
 
     <MainPackage
