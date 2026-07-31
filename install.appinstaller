@@ -9,7 +9,7 @@
         Publisher="CN=Wen-ar"
         Version="1.5.2.0"
         ProcessorArchitecture="x64"
-        Uri="https://wen-ar.github.io/calculator-web/Calculator_1.5.2.0_x64.msix" />
+        Uri="https://github.com/wen-ar/-calculator-web/releases/download/v1.5.2/Calculator_1.5.2.0_x64.msix" />
 
     <UpdateSettings>
         <OnLaunch HoursBetweenUpdateChecks="0" />
