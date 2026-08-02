@@ -8,7 +8,7 @@
 
 本專案採用 **React 18** 與 **Tailwind CSS** 開發，提供順暢的操作介面與流暢的動態體驗。支援跨裝置響應式排版（Responsive Design）與多種互動功能。
 
-* 🌐 **線上預覽 (Live Demo)**：[點此造訪網站](https://<your-username>.github.io/<repository-name>/)
+* 🌐 **線上預覽 (Live Demo)**：[點此造訪網站](https://wen-ar.github.io/-calculator-web/)
   *(請將網址替換為你設定好的 GitHub Pages 連結)*
 
 ---
