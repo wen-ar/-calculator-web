@@ -5,29 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>下載 Calculator</title>
     <style>
-        body { font-family: system-ui, sans-serif; text-align: center; padding: 50px; background: #f4f4f9; }
+        body { font-family: system-ui, -apple-system, sans-serif; text-align: center; padding: 50px 20px; background: #f4f4f9; color: #333; }
         .card { background: white; max-width: 500px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .btn { display: inline-block; padding: 12px 24px; background: #0078d4; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 15px; }
+        .btn { display: inline-block; padding: 14px 28px; background: #0078d4; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 15px; font-size: 16px; transition: background 0.2s, transform 0.1s; cursor: pointer; border: none; }
         .btn:hover { background: #005a9e; }
-        .step { text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 14px; }
+        .btn:active { transform: scale(0.98); }
+        
+        .sub-link { margin-top: 25px; font-size: 13px; color: #666; }
+        .sub-link a { color: #0078d4; text-decoration: none; }
+        .sub-link a:hover { text-decoration: underline; }
+
+        /* Modal 彈出視窗樣式 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-card { background: white; width: 90%; max-width: 420px; padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: left; animation: fadeIn 0.25s ease-out; }
+        .modal-card h3 { margin-top: 0; color: #0078d4; display: flex; align-items: center; gap: 8px; }
+        .modal-card ol { padding-left: 20px; font-size: 14px; line-height: 1.6; color: #444; }
+        .modal-btn { display: block; width: 100%; text-align: center; background: #0078d4; color: white; border: none; padding: 10px 0; border-radius: 6px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        .modal-btn:hover { background: #005a9e; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
+
     <div class="card">
         <h1>🧮 Calculator 下載頁面</h1>
-        <p>版本：v1.5.2.0</p>
+        <p style="color: #666; margin-bottom: 25px;">最新版本：<strong>v1.5.2.0</strong></p>
         
-        <a class="btn" href="https://github.com/wen-ar/-calculator-web/releases/download/v1.5.2/Calculator_Setup_v1.5.2.exe">
+        <!-- 下載按鈕觸發 JS -->
+        <button class="btn" onclick="startDownload()">
             🚀 一鍵自動安裝 Calculator (.exe)
-        </a>
+        </button>
 
-
-        <div class="step">
-            <strong>⚠️ 第一次安裝注意事項：</strong><br>
-            1. 下載並安裝憑證：<a href="Calculator.cer">下載安全性憑證 (Calculator.cer)</a><br>
-            2. 雙擊憑證選擇「本機電腦」→「受信任的根憑證授權機構」完成匯入。<br>
-            3. 完成後回到此網頁，點擊上方藍色按鈕即可一鍵安裝！
+        <div class="sub-link">
+            需要傳統套件？ <a href="https://github.com/wen-ar/-calculator-web/releases/download/v1.5.2/Calculator_1.5.2.0_x64.msix">下載 .msix</a> ｜ 
+            <a href="Calculator.cer">安全性憑證 (.cer)</a>
         </div>
     </div>
+
+    <!-- 彈出式通知 Modal -->
+    <div id="downloadModal" class="modal-overlay">
+        <div class="modal-card">
+            <h3>🎉 已開始下載安裝檔！</h3>
+            <p style="font-size: 14px; color: #555;">請依照以下步驟完成安裝：</p>
+            <ol>
+                <li>開啟剛下載好的 <strong>Calculator_Setup_v1.5.2.exe</strong>。</li>
+                <li>若跳出 Windows 安全防護/UAC 確認，請點選<strong>「是」</strong>或<strong>「仍要執行」</strong>。</li>
+                <li>程式將自動完成憑證匯入與計算機安裝！</li>
+            </ol>
+            <button class="modal-btn" onclick="closeModal()">我知道了</button>
+        </div>
+    </div>
+
+    <script>
+        function startDownload() {
+            // 觸發彈出通知
+            document.getElementById('downloadModal').style.display = 'flex';
+            
+            // 延遲 0.5 秒觸發檔案下載（體驗更順暢）
+            setTimeout(() => {
+                window.location.href = "https://github.com/wen-ar/-calculator-web/releases/download/v1.5.2/Calculator_Setup_v1.5.2.exe";
+            }, 500);
+        }
+
+        function closeModal() {
+            document.getElementById('downloadModal').style.display = 'none';
+        }
+    </script>
+
 </body>
 </html>
