@@ -9,25 +9,30 @@ jobs:
   build:
     runs-on: windows-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Download Release Assets
-        uses: dsaltares/fetch-gh-release-asset@master
-        with:
-          version: 'latest'
-          file: 'Calculator_1.5.2.0_x64.msix'
-          target: 'Calculator_1.5.2.0_x64.msix'
+      # 使用 GitHub 官方 CLI 工具下載最新 Release 的 .msix 檔案
+      - name: Download MSIX from Release
+        run: |
+          gh release download --pattern "*.msix" --dir .
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 改用穩定的 Inno Setup Action
+      # 安裝 Inno Setup
       - name: Install Inno Setup
         uses: MinchinWeb/action-innosetup@v1
 
+      # 編譯打包出 .exe
       - name: Compile Inno Setup Script
         run: |
           ISCC.exe setup.iss
 
+      # 將打包好的 .exe 自動傳回 Release 頁面
       - name: Upload EXE to Release
         uses: softprops/action-gh-release@v1
         with:
