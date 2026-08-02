@@ -16,23 +16,24 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 使用 GitHub 官方 CLI 工具下載最新 Release 的 .msix 檔案
+      # 1. 使用官方 CLI 下載最新 Release 的 .msix 檔案
       - name: Download MSIX from Release
         run: |
           gh release download --pattern "*.msix" --dir .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 安裝 Inno Setup
-      - name: Install Inno Setup
-        uses: MinchinWeb/action-innosetup@v1
+      # 2. 直接透過 Chocolatey 安裝官方 Inno Setup（最穩定，不求人！）
+      - name: Install Inno Setup via Choco
+        run: |
+          choco install innosetup --no-progress -y
 
-      # 編譯打包出 .exe
+      # 3. 執行編譯（安裝後 iscc 會自動加入系統路徑）
       - name: Compile Inno Setup Script
         run: |
-          ISCC.exe setup.iss
+          iscc setup.iss
 
-      # 將打包好的 .exe 自動傳回 Release 頁面
+      # 4. 上傳產生的 .exe 回 Release 頁面
       - name: Upload EXE to Release
         uses: softprops/action-gh-release@v1
         with:
