@@ -16,24 +16,25 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 1. 動態下載當前 Release 的 .msix 檔案
-      - name: Download MSIX from Release
+      # 1. 下載該 Release 頁面上的 msix 與 cer 檔
+      - name: Download MSIX and CER from Release
         run: |
           gh release download ${{ github.ref_name }} --pattern "*.msix" --dir .
+          gh release download ${{ github.ref_name }} --pattern "*.cer" --dir .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2. 安裝官方 Inno Setup
+      # 2. 安裝 Inno Setup
       - name: Install Inno Setup via Choco
         run: |
           choco install innosetup --no-progress -y
 
-      # 3. 執行 Inno Setup 編譯（請確保 setup.iss 存在於儲存庫根目錄）
+      # 3. 編譯安裝包
       - name: Compile Inno Setup Script
         run: |
           iscc setup.iss
 
-      # 4. 上傳產生的 .exe（請確保路徑與 setup.iss 中的 OutputDir / OutputBaseFilename 一致）
+      # 4. 將 Output 內的 .exe 上傳回 GitHub Release
       - name: Upload EXE to Release
         uses: softprops/action-gh-release@v2
         with:
