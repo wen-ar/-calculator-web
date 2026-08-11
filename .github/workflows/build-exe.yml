@@ -16,10 +16,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 1. 精確指定下載 v1.5.2 Release 的 .msix 檔案
+      # 1. 精確指定下載 v1.5.3 Release 的 .msix 檔案
       - name: Download MSIX from Release
         run: |
-          gh release download v1.5.2 --pattern "*.msix" --dir .
+          gh release download v1.5.3 --pattern "*.msix" --dir .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -33,11 +33,11 @@ jobs:
         run: |
           iscc setup.iss
 
-      # 4. 上傳產生的 .exe 回 v1.5.2 Release 頁面
+      # 4. 上傳產生的 .exe 回 v1.5.3 Release 頁面
       - name: Upload EXE to Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "v1.5.2"
-          files: Output/Calculator_Setup_v1.5.2.exe
+          tag_name: "v1.5.3"
+          files: Output/Calculator_Setup_v1.5.3.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
