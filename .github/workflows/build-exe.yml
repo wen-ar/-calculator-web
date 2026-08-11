@@ -16,10 +16,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 1. 精確指定下載 v1.5.3.0 Release 的 .msix 檔案
+      # 1. 動態下載當前 Release 的 .msix 檔案
       - name: Download MSIX from Release
         run: |
-          gh release download v1.5.3.0 --pattern "*.msix" --dir .
+          gh release download ${{ github.ref_name }} --pattern "*.msix" --dir .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -28,16 +28,16 @@ jobs:
         run: |
           choco install innosetup --no-progress -y
 
-      # 3. 執行打包
+      # 3. 執行 Inno Setup 編譯（請確保 setup.iss 存在於儲存庫根目錄）
       - name: Compile Inno Setup Script
         run: |
           iscc setup.iss
 
-      # 4. 上傳產生的 .exe 回 v1.5.3.0 Release 頁面
+      # 4. 上傳產生的 .exe（請確保路徑與 setup.iss 中的 OutputDir / OutputBaseFilename 一致）
       - name: Upload EXE to Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "v1.5.3.0"
-          files: Output/Calculator_Setup_v1.5.3.0.exe
+          tag_name: ${{ github.ref_name }}
+          files: Output/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
