@@ -4,11 +4,6 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      release_tag:
-        description: 'Release tag (例如: v1.5.3)'
-        required: true
-        default: 'v1.5.3'
 
 jobs:
   build:
@@ -20,43 +15,39 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 1. 取得 Tag 名稱
-      - name: Set Release Tag
+      # 1. 自動偵測最新的 Release Tag 名稱
+      - name: Auto Detect Latest Release Tag
         id: vars
         run: |
-          $tag = "${{ github.event.inputs.release_tag }}"
-          if ([string]::IsNullOrWhiteSpace($tag)) {
-            $tag = "${{ github.ref_name }}"
+          # 取得最新發布的 Release Tag 名稱
+          $latestTag = (gh release list --limit 1 | ForEach-Object { $_.Split("`t")[2] })
+          if ([string]::IsNullOrWhiteSpace($latestTag)) {
+            Write-Error "找不到任何已發布的 Release！請確認 GitHub Releases 是否已發布。"
+            exit 1
           }
-          Write-Output "TAG=$tag" >> $env:GITHUB_OUTPUT
-
-      # 2. 列出目前的 Releases（用於排查 Debug，看系統到底抓到什麼 Tag）
-      - name: Debug List Releases
-        run: |
-          echo "=== 目前專案中的 Release 清單 ==="
-          gh release list
+          Write-Host "自動偵測到最新的 Release Tag: $latestTag"
+          echo "TAG=$latestTag" >> $env:GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 3. 下載 MSIX 檔案（加上詳盡日誌）
-      - name: Download MSIX from Release
+      # 2. 自動下載該 Release 中的 .msix 檔案
+      - name: Download MSIX from Latest Release
         run: |
-          echo "準備下載 Tag: ${{ steps.vars.outputs.TAG }} 的 .msix 檔案..."
-          gh release download ${{ steps.vars.outputs.TAG }} --pattern "*.msix" --dir .
+          gh release download ${{ steps.vars.outputs.TAG }} --pattern "*.msix" --dir . --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 4. 安裝 Inno Setup
+      # 3. 安裝 Inno Setup
       - name: Install Inno Setup via Choco
         run: |
           choco install innosetup --no-progress -y
 
-      # 5. 編譯安裝包
+      # 4. 編譯安裝包
       - name: Compile Inno Setup Script
         run: |
           iscc setup.iss
 
-      # 6. 上傳 Output 資料夾下的 EXE 回 Release 頁面
+      # 5. 上傳產出的 EXE 檔案回到該 Release
       - name: Upload EXE to Release
         uses: softprops/action-gh-release@v2
         with:
