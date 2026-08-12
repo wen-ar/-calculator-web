@@ -7,8 +7,8 @@ on:
     inputs:
       release_tag:
         description: 'Release tag to download from (e.g. v1.5.2)'
-        required: true  # ✅ 改為必填，避免空值
-        type: string
+        required: false
+        default: 'v1.5.2'
 
 jobs:
   build:
@@ -20,53 +20,34 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 自動判斷當前的 Tag 名稱
+      # 1. 自動取得 Tag 名稱
       - name: Set Release Tag
         id: vars
         run: |
           $tag = "${{ github.event.inputs.release_tag }}"
           if ([string]::IsNullOrWhiteSpace($tag)) {
-            # 仅當由 release 事件觸發時使用 github.ref_name
-            if ("${{ github.event_name }}" -eq "release") {
-              $tag = "${{ github.ref_name }}"
-            } else {
-              Write-Error "Release tag 是必填的"
-              exit 1
-            }
+            $tag = "${{ github.ref_name }}"
           }
           echo "TAG=$tag" >> $env:GITHUB_OUTPUT
-          Write-Host "Using release tag: $tag"
 
-      # 驗證發布版本是否存在
-      - name: Verify Release Exists
-        run: |
-          $tag = "${{ steps.vars.outputs.TAG }}"
-          gh release view $tag --json id 2>$null
-          if ($LASTEXITCODE -ne 0) {
-            Write-Error "Release '$tag' not found in this repository"
-            exit 1
-          }
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # 1. 只需要從 Release 下載 .msix 檔案
+      # 2. 直接從 Release 下載 .msix（若找不到檔案會列出錯誤）
       - name: Download MSIX from Release
         run: |
           gh release download ${{ steps.vars.outputs.TAG }} --pattern "*.msix" --dir .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2. 安裝 Inno Setup
+      # 3. 安裝 Inno Setup
       - name: Install Inno Setup via Choco
         run: |
           choco install innosetup --no-progress -y
 
-      # 3. 編譯安裝包
+      # 4. 編譯安裝包
       - name: Compile Inno Setup Script
         run: |
           iscc setup.iss
 
-      # 4. 將 Output 資料夾下的 EXE 上傳回該 Release
+      # 5. 上傳 Output 資料夾下的 EXE 回 Release 頁面
       - name: Upload EXE to Release
         uses: softprops/action-gh-release@v2
         with:
