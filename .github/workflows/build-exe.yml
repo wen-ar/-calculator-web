@@ -7,7 +7,8 @@ on:
     inputs:
       release_tag:
         description: 'Release tag to download from (e.g. v1.5.2)'
-        required: false
+        required: true  # ✅ 改為必填，避免空值
+        type: string
 
 jobs:
   build:
@@ -25,9 +26,28 @@ jobs:
         run: |
           $tag = "${{ github.event.inputs.release_tag }}"
           if ([string]::IsNullOrWhiteSpace($tag)) {
-            $tag = "${{ github.ref_name }}"
+            # 仅當由 release 事件觸發時使用 github.ref_name
+            if ("${{ github.event_name }}" -eq "release") {
+              $tag = "${{ github.ref_name }}"
+            } else {
+              Write-Error "Release tag 是必填的"
+              exit 1
+            }
           }
           echo "TAG=$tag" >> $env:GITHUB_OUTPUT
+          Write-Host "Using release tag: $tag"
+
+      # 驗證發布版本是否存在
+      - name: Verify Release Exists
+        run: |
+          $tag = "${{ steps.vars.outputs.TAG }}"
+          gh release view $tag --json id 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Release '$tag' not found in this repository"
+            exit 1
+          }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # 1. 只需要從 Release 下載 .msix 檔案
       - name: Download MSIX from Release
