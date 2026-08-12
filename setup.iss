@@ -21,4 +21,4 @@ Source: "*.msix"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Filename: "certutil.exe"; Parameters: "-addstore ""Root"" ""{tmp}\Calculator.cer"""; Flags: runhidden
 
 ; 2. 自動執行 PowerShell 安裝抓到的 .msix 檔案
-Filename: "powershell.exe"; Parameters: "-NoProfile -Command ""& { Get-ChildItem -Path '{tmp}\*.msix' | ForEach-Object { Add-AppxPackage -Path $_.FullName } }"""; Flags: runhidden
+Filename: "powershell.exe"; Parameters: "-NoProfile -Command ""& { Get-ChildItem -Path '{{tmp}}\*.msix' | ForEach-Object { Add-AppxPackage -Path $_.FullName } }"""; Flags: runhidden
