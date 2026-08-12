@@ -6,9 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Release tag to download from (e.g. v1.5.2)'
+        description: 'Release tag (例如: v1.5.3.0 或 v1.5.2，留空代表自動抓取最新)'
         required: false
-        default: 'v1.5.2'
 
 jobs:
   build:
@@ -20,7 +19,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 1. 自動取得 Tag 名稱
+      # 1. 自動取得 Tag 名稱（若無輸入則自動尋找最新 Tag）
       - name: Set Release Tag
         id: vars
         run: |
@@ -28,9 +27,14 @@ jobs:
           if ([string]::IsNullOrWhiteSpace($tag)) {
             $tag = "${{ github.ref_name }}"
           }
+          if ($tag -eq "main" -or [string]::IsNullOrWhiteSpace($tag)) {
+            $tag = (gh release list --limit 1 | ForEach-Object { $_.Split("`t")[2] })
+          }
           echo "TAG=$tag" >> $env:GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2. 直接從 Release 下載 .msix（若找不到檔案會列出錯誤）
+      # 2. 從指定的 Release 下載 .msix 檔案
       - name: Download MSIX from Release
         run: |
           gh release download ${{ steps.vars.outputs.TAG }} --pattern "*.msix" --dir .
@@ -47,7 +51,7 @@ jobs:
         run: |
           iscc setup.iss
 
-      # 5. 上傳 Output 資料夾下的 EXE 回 Release 頁面
+      # 5. 上傳 Output 資料夾下的 EXE 回該 Release 頁面
       - name: Upload EXE to Release
         uses: softprops/action-gh-release@v2
         with:
